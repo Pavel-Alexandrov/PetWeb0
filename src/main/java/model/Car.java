@@ -24,7 +24,6 @@ public class Car {
     private Long price;
 
     public Car() {
-
     }
 
     public Car(String brand, String model, String licensePlate, Long price) {

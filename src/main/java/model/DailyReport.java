@@ -20,7 +20,6 @@ public class DailyReport {
     private Long soldCars;
 
     public DailyReport() {
-
     }
 
     public DailyReport(Long earnings, Long soldCars) {
