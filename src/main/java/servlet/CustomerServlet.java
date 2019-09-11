@@ -1,7 +1,9 @@
 package servlet;
 
 import com.google.gson.Gson;
+import exceptions.DBException;
 import service.CarService;
+import service.DailyReportService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,10 +25,17 @@ public class CustomerServlet extends HttpServlet {
     // покупает машину, передав параметры марки машины, названия и госномера
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getParameter("brand");
-        req.getParameter("model");
-        req.getParameter("licensePlate");
+        CarService carService = CarService.getInstance();
+        DailyReportService dailyReportService = DailyReportService.getInstance();
 
+        String brand = req.getParameter("brand");
+        String model = req.getParameter("model");
+        String licensePlate = req.getParameter("licensePlate");
 
+        if (carService.removeCar(brand, model, licensePlate) && dailyReportService.addSoldCar()) {
+            resp.setStatus(200);
+        } else {
+            resp.setStatus(403);
+        }
     }
 }

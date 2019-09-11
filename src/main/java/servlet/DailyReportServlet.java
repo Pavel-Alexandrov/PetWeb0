@@ -1,5 +1,7 @@
 package servlet;
 
+import exceptions.DBException;
+import service.CarService;
 import service.DailyReportService;
 
 import javax.servlet.ServletException;
@@ -14,16 +16,26 @@ public class DailyReportServlet extends HttpServlet {
     // */report/all* возвращает все сформированные отчеты
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        DailyReportService dailyReportService = DailyReportService.getInstance();
+
         if (req.getPathInfo().contains("all")) {
-            DailyReportService.getInstance().getAllDailyReports();
+            dailyReportService.getAllDailyReports();
         } else if (req.getPathInfo().contains("last")) {
-            DailyReportService.getInstance().getLastReport();
+            dailyReportService.getLastReport();
         }
     }
 
     //удаляет все данные об отчетах и машинах
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        CarService carService = CarService.getInstance();
+        DailyReportService dailyReportService = DailyReportService.getInstance();
+
+        try {
+            carService.delete();
+            dailyReportService.delete();
+        } catch (DBException dbe) {
+            throw new ServletException();
+        }
     }
 }

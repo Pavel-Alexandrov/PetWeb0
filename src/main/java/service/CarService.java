@@ -1,5 +1,6 @@
 package service;
 
+import exceptions.DBException;
 import model.Car;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -24,6 +25,7 @@ public class CarService {
         return carService;
     }
 
+
     private Configuration getMySqlConfiguration() {
         Configuration configuration = new Configuration();
 
@@ -38,6 +40,18 @@ public class CarService {
     }
 
     public List<Car> getAllCars() {
+
+    }
+
+    public boolean removeCar(String brand, String model, String licensePlate) {
+
+    }
+
+    public boolean addCar(String brand, String model, String licensePlate, Long price) {
+
+    }
+
+    public boolean delete() throws DBException {
 
     }
 }

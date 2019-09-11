@@ -1,5 +1,8 @@
 package servlet;
 
+import exceptions.DBException;
+import service.DailyReportService;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +16,12 @@ public class NewDayServlet extends HttpServlet {
     //суммарная выручка за день и количество проданных машин
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp);
+        DailyReportService dailyReportService = DailyReportService.getInstance();
+
+        try {
+            dailyReportService.drawUpReport();
+        } catch (DBException dbe) {
+            throw new ServletException();
+        }
     }
 }

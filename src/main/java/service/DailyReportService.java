@@ -1,6 +1,7 @@
 package service;
 
 import DAO.DailyReportDao;
+import exceptions.DBException;
 import model.DailyReport;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -14,8 +15,19 @@ public class DailyReportService {
 
     private SessionFactory sessionFactory;
 
+    private long soldCars = 0;
+
+    private long earning = 0;
+
     private DailyReportService(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    public static DailyReportService getInstance() {
+        if (dailyReportService == null) {
+            dailyReportService = new DailyReportService(DBHelper.getSessionFactory());
+        }
+        return dailyReportService;
     }
 
     private Configuration getMySqlConfiguration() {
@@ -31,19 +43,23 @@ public class DailyReportService {
         return configuration;
     }
 
-    public static DailyReportService getInstance() {
-        if (dailyReportService == null) {
-            dailyReportService = new DailyReportService(DBHelper.getSessionFactory());
-        }
-        return dailyReportService;
-    }
-
     public List<DailyReport> getAllDailyReports() {
         return new DailyReportDao(sessionFactory.openSession()).getAllDailyReport();
     }
 
-
     public DailyReport getLastReport() {
         return null;
+    }
+
+    public boolean addSoldCar() {
+
+    }
+
+    public boolean drawUpReport() throws DBException {
+
+    }
+
+    public boolean delete() throws DBException {
+
     }
 }
