@@ -3,6 +3,8 @@ package service;
 import DAO.DailyReportDao;
 import exceptions.DBException;
 import model.DailyReport;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import util.DBHelper;
@@ -30,36 +32,52 @@ public class DailyReportService {
         return dailyReportService;
     }
 
-    private Configuration getMySqlConfiguration() {
-        Configuration configuration = new Configuration();
-
-        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-        configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/db_example");
-        configuration.setProperty("hibernate.connection.username", "root");
-        configuration.setProperty("hibernate.connection.password", "root");
-        configuration.setProperty("hibernate.show_sql", "true");
-        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
-        return configuration;
+    public List<DailyReport> getAllDailyReports() throws DBException {
+        try {
+            return new DailyReportDao(sessionFactory.openSession()).getAllDailyReport();
+        } catch (HibernateException he) {
+            throw new DBException(he);
+        }
     }
 
-    public List<DailyReport> getAllDailyReports() {
-        return new DailyReportDao(sessionFactory.openSession()).getAllDailyReport();
+    public DailyReport getLastReport() throws DBException {
+        try {
+            Session session = sessionFactory.openSession();
+            DailyReportDao dailyReportDao = new DailyReportDao(session);
+            DailyReport report = dailyReportDao.getLastReport();
+            session.close();
+            return report;
+        } catch (HibernateException he) {
+            throw new DBException(he);
+        }
     }
 
-    public DailyReport getLastReport() {
-        return null;
+    public void addSoldCar(Long carPrice) {
+            this.soldCars++;
+            this.earning += carPrice;
     }
 
-    public boolean addSoldCar() {
-
+    public void drawUpReport() throws DBException {
+        try {
+            Session session = sessionFactory.openSession();
+            DailyReportDao dailyReportDao = new DailyReportDao(session);
+            dailyReportDao.addReport(soldCars, earning);
+            this.soldCars = 0;
+            this.earning = 0;
+            session.close();
+        } catch (HibernateException he) {
+            throw new DBException(he);
+        }
     }
 
-    public boolean drawUpReport() throws DBException {
-
-    }
-
-    public boolean delete() throws DBException {
-
+    public void delete() throws DBException {
+        try {
+            Session session = sessionFactory.openSession();
+            DailyReportDao dailyReportDao = new DailyReportDao(session);
+            dailyReportDao.clean();
+            session.close();
+        } catch (HibernateException he) {
+            throw new DBException(he);
+        }
     }
 }

@@ -2,6 +2,7 @@ package servlet;
 
 import com.google.gson.Gson;
 import exceptions.DBException;
+import model.Car;
 import service.CarService;
 import service.DailyReportService;
 
@@ -32,7 +33,10 @@ public class CustomerServlet extends HttpServlet {
         String model = req.getParameter("model");
         String licensePlate = req.getParameter("licensePlate");
 
-        if (carService.removeCar(brand, model, licensePlate) && dailyReportService.addSoldCar()) {
+        if (carService.checkCarExistence(brand, model, licensePlate)) {
+            Car car = carService.getCar(brand, model, licensePlate);
+            carService.removeCar(brand, model, licensePlate);
+            dailyReportService.addSoldCar(car.getPrice());
             resp.setStatus(200);
         } else {
             resp.setStatus(403);

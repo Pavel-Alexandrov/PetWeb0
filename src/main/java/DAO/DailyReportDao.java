@@ -21,4 +21,16 @@ public class DailyReportDao {
         session.close();
         return dailyReports;
     }
+
+    public DailyReport getLastReport() {
+
+    }
+
+    public void addReport(long soldCars, long earning) {
+
+    }
+
+    public void clean() {
+
+    }
 }
