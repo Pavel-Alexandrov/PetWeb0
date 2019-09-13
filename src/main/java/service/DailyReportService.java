@@ -6,6 +6,7 @@ import model.DailyReport;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import util.DBHelper;
 
@@ -60,10 +61,12 @@ public class DailyReportService {
     public void drawUpReport() throws DBException {
         try {
             Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
             dailyReportDao.addReport(soldCars, earning);
             this.soldCars = 0;
             this.earning = 0;
+            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);
@@ -73,8 +76,10 @@ public class DailyReportService {
     public void delete() throws DBException {
         try {
             Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
             dailyReportDao.clean();
+            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);

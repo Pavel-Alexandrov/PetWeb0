@@ -2,10 +2,12 @@ package service;
 
 import DAO.CarDao;
 import exceptions.DBException;
+import jdk.internal.jline.internal.Nullable;
 import model.Car;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import util.DBHelper;
 
 import java.util.List;
@@ -39,13 +41,22 @@ public class CarService {
         }
     }
 
-    public boolean checkCarExistence(String brand, String model, String licensePlate) throws DBException {
+    @Nullable
+    public Car getCarIfExist(String brand, String model, String licensePlate) throws DBException {
         try {
             Session session = sessionFactory.openSession();
             CarDao carDao = new CarDao(session);
-            boolean carExist = carDao.checkCarExistence(brand, model, licensePlate);
+            List<Car> carList = carDao.getCar(brand, model, licensePlate);
+            Car car;
+            switch (carList.size()) {
+                case (0): car = null;
+                break;
+                case (1): car = carList.get(0);
+                break;
+                default: throw new DBException(new Exception());
+            }
             session.close();
-            return carExist;
+            return car;
         } catch (HibernateException he) {
             throw new DBException(he);
         }
@@ -54,21 +65,11 @@ public class CarService {
     public void removeCar(String brand, String model, String licensePlate) throws DBException {
         try {
             Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
             CarDao carDao = new CarDao(session);
             carDao.removeCar(brand, model, licensePlate);
+            transaction.commit();
             session.close();
-        } catch (HibernateException he) {
-            throw new DBException(he);
-        }
-    }
-
-    public Long getCarPrice() throws DBException {
-        try {
-            Session session = sessionFactory.openSession();
-            CarDao carDao = new CarDao(session);
-            Long price = carDao.getCarPrice();
-            session.close();
-            return price;
         } catch (HibernateException he) {
             throw new DBException(he);
         }
@@ -78,7 +79,7 @@ public class CarService {
         try {
             Session session = sessionFactory.openSession();
             CarDao carDao = new CarDao(session);
-            Car car = carDao.getCar();
+            Car car = carDao.getCar(brand, model, licensePlate);
             session.close();
             return car;
         } catch (HibernateException he) {
@@ -89,11 +90,13 @@ public class CarService {
     public boolean addCar(String brand, String model, String licensePlate, Long price) throws DBException {
         try {
             Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
             CarDao carDao = new CarDao(session);
             if (carDao.getCarsSameBrand(brand).size() == 10) {
                 return false;
             }
-            carDao.addCar();
+            carDao.addCar(brand, model, licensePlate, price);
+            transaction.commit();
             session.close();
             return true;
         } catch (HibernateException he) {
@@ -104,8 +107,10 @@ public class CarService {
     public void delete() throws DBException {
         try {
             Session session = sessionFactory.openSession();
+            Transaction transaction = session.beginTransaction();
             CarDao carDao = new CarDao(session);
             carDao.clean();
+            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);

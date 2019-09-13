@@ -33,8 +33,8 @@ public class CustomerServlet extends HttpServlet {
         String model = req.getParameter("model");
         String licensePlate = req.getParameter("licensePlate");
 
-        if (carService.checkCarExistence(brand, model, licensePlate)) {
-            Car car = carService.getCar(brand, model, licensePlate);
+        Car car = carService.getCarIfExist(brand, model, licensePlate);
+        if (car != null) {
             carService.removeCar(brand, model, licensePlate);
             dailyReportService.addSoldCar(car.getPrice());
             resp.setStatus(200);
