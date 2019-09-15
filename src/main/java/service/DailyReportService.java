@@ -20,7 +20,7 @@ public class DailyReportService {
 
     private long soldCars = 0;
 
-    private long earning = 0;
+    private long earnings = 0;
 
     private DailyReportService(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -65,7 +65,7 @@ public class DailyReportService {
 
     public void addSoldCar(Long carPrice) {
             this.soldCars++;
-            this.earning += carPrice;
+            this.earnings += carPrice;
     }
 
     public void drawUpReport() throws DBException {
@@ -73,9 +73,9 @@ public class DailyReportService {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
-            DailyReport dailyReport = new DailyReport(earning, soldCars);
+            DailyReport dailyReport = new DailyReport(earnings, soldCars);
             dailyReportDao.addReport(dailyReport);
-            this.earning = 0;
+            this.earnings = 0;
             this.soldCars = 0;
             transaction.commit();
             session.close();

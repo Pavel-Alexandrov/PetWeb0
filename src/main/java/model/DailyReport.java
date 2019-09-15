@@ -1,12 +1,12 @@
 package model;
 
-import org.hibernate.Session;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "daily_reports")
-public class DailyReport {
+public class DailyReport implements Serializable {
 
     @Id
     @Column(name = "id")

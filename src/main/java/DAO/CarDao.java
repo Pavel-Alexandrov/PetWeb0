@@ -16,7 +16,7 @@ public class CarDao {
     }
 
     public List<Car> getAllCars() {
-        Query query = session.createQuery("FROM Car");
+        Query query = session.createQuery("FROM Car c");
         List<Car> carList = query.getResultList();
         return carList;
     }
@@ -44,12 +44,12 @@ public class CarDao {
     }
 
     public void addCar(Car car) {
-        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT car.getBrand(), car.getModel(), car.getLicensePlate(), car.getPrice() from Car car");
+        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT " + car.getBrand() + ", " + car.getModel() + ", " + car.getLicensePlate() + ", "+ car.getPrice() + " from Car car");
         query.executeUpdate();
     }
 
     public void clean() {
-        Query query = session.createQuery("DELETE FROM Car");
+        Query query = session.createQuery("DELETE FROM Car c");
         query.executeUpdate();
     }
 }

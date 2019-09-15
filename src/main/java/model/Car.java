@@ -1,10 +1,11 @@
 package model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "cars")
-public class Car {
+public class Car implements Serializable {
 
     @Id
     @Column(name = "id")

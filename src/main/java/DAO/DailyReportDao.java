@@ -15,7 +15,7 @@ public class DailyReportDao {
     }
 
     public List<DailyReport> getAllDailyReport() {
-        Query query = session.createQuery("FROM DailyReport");
+        Query query = session.createQuery("FROM DailyReport d");
         return query.getResultList();
     }
 
@@ -26,12 +26,12 @@ public class DailyReportDao {
     }
 
     public void addReport(DailyReport dailyReport) {
-        Query query = session.createQuery("INSERT INTO DailyReport (earning, soldCars) SELECT dailyReport.getEarning(), dailyReport.getSoldCars()");
+        Query query = session.createQuery("INSERT INTO DailyReport (earnings, soldCars) SELECT dailyReport.getEarnings(), dailyReport.getSoldCars()");
         query.executeUpdate();
     }
 
     public void clean() {
-        Query query = session.createQuery("DELETE FROM DailyReport");
+        Query query = session.createQuery("DELETE FROM DailyReport d");
         query.executeUpdate();
     }
 }
