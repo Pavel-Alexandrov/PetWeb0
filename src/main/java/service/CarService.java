@@ -2,7 +2,6 @@ package service;
 
 import DAO.CarDao;
 import exceptions.DBException;
-import jdk.internal.jline.internal.Nullable;
 import model.Car;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -41,7 +40,7 @@ public class CarService {
         }
     }
 
-    @Nullable
+
     public Car getCarIfExist(String brand, String model, String licensePlate) throws DBException {
         try {
             Session session = sessionFactory.openSession();
@@ -79,7 +78,15 @@ public class CarService {
         try {
             Session session = sessionFactory.openSession();
             CarDao carDao = new CarDao(session);
-            Car car = carDao.getCar(brand, model, licensePlate);
+            List <Car> carList = carDao.getCar(brand, model, licensePlate);
+            Car car;
+            switch (carList.size()) {
+                case (0): car = null;
+                    break;
+                case (1): car = carList.get(0);
+                    break;
+                default: throw new DBException(new Exception());
+            }
             session.close();
             return car;
         } catch (HibernateException he) {
@@ -95,7 +102,8 @@ public class CarService {
             if (carDao.getCarsSameBrand(brand).size() == 10) {
                 return false;
             }
-            carDao.addCar(brand, model, licensePlate, price);
+            Car car = new Car(brand, model, licensePlate, price);
+            carDao.addCar(car);
             transaction.commit();
             session.close();
             return true;

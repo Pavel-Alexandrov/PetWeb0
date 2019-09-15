@@ -43,11 +43,13 @@ public class CarDao {
         return query.getResultList();
     }
 
-    public void addCar(String brand, String model, String licensePlate, Long price) {
-        Query query = session.createQuery("INSERT INTO Car ()");
+    public void addCar(Car car) {
+        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT car.getBrand(), car.getModel(), car.getLicensePlate(), car.getPrice() from Car car");
+        query.executeUpdate();
     }
 
     public void clean() {
-
+        Query query = session.createQuery("DELETE FROM Car");
+        query.executeUpdate();
     }
 }

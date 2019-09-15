@@ -2,8 +2,8 @@ package DAO;
 
 import model.DailyReport;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
+import javax.persistence.Query;
 import java.util.List;
 
 public class DailyReportDao {
@@ -15,22 +15,23 @@ public class DailyReportDao {
     }
 
     public List<DailyReport> getAllDailyReport() {
-        Transaction transaction = session.beginTransaction();
-        List<DailyReport> dailyReports = session.createQuery("FROM DailyReport").list();
-        transaction.commit();
-        session.close();
-        return dailyReports;
+        Query query = session.createQuery("FROM DailyReport");
+        return query.getResultList();
     }
 
-    public DailyReport getLastReport() {
-
+    public List<DailyReport> getLastReport() {
+        Query query = session.createQuery("FROM DailyReport ORDER BY id DESC");
+        query.setMaxResults(1);
+        return query.getResultList();
     }
 
-    public void addReport(long soldCars, long earning) {
-
+    public void addReport(DailyReport dailyReport) {
+        Query query = session.createQuery("INSERT INTO DailyReport (earning, soldCars) SELECT dailyReport.getEarning(), dailyReport.getSoldCars()");
+        query.executeUpdate();
     }
 
     public void clean() {
-
+        Query query = session.createQuery("DELETE FROM DailyReport");
+        query.executeUpdate();
     }
 }

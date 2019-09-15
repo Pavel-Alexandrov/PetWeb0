@@ -35,7 +35,11 @@ public class DailyReportService {
 
     public List<DailyReport> getAllDailyReports() throws DBException {
         try {
-            return new DailyReportDao(sessionFactory.openSession()).getAllDailyReport();
+            Session session = sessionFactory.openSession();
+            DailyReportDao dailyReportDao = new DailyReportDao(session);
+            List<DailyReport> dailyReportList = dailyReportDao.getAllDailyReport();
+            session.close();
+            return dailyReportList;
         } catch (HibernateException he) {
             throw new DBException(he);
         }
@@ -45,9 +49,15 @@ public class DailyReportService {
         try {
             Session session = sessionFactory.openSession();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
-            DailyReport report = dailyReportDao.getLastReport();
+            List<DailyReport> dailyReportList = dailyReportDao.getLastReport();
+            DailyReport dailyReport;
+            if (dailyReportList.size() == 1) {
+                dailyReport = dailyReportList.get(0);
+            } else {
+                throw new DBException(new Exception());
+            }
             session.close();
-            return report;
+            return dailyReport;
         } catch (HibernateException he) {
             throw new DBException(he);
         }
@@ -63,9 +73,10 @@ public class DailyReportService {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
-            dailyReportDao.addReport(soldCars, earning);
-            this.soldCars = 0;
+            DailyReport dailyReport = new DailyReport(earning, soldCars);
+            dailyReportDao.addReport(dailyReport);
             this.earning = 0;
+            this.soldCars = 0;
             transaction.commit();
             session.close();
         } catch (HibernateException he) {

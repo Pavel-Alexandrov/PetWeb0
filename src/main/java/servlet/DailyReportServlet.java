@@ -16,22 +16,25 @@ public class DailyReportServlet extends HttpServlet {
     // */report/all* возвращает все сформированные отчеты
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DailyReportService dailyReportService = DailyReportService.getInstance();
+        try {
+            DailyReportService dailyReportService = DailyReportService.getInstance();
 
-        if (req.getPathInfo().contains("all")) {
-            dailyReportService.getAllDailyReports();
-        } else if (req.getPathInfo().contains("last")) {
-            dailyReportService.getLastReport();
+            if (req.getPathInfo().contains("all")) {
+                dailyReportService.getAllDailyReports();
+            } else if (req.getPathInfo().contains("last")) {
+                dailyReportService.getLastReport();
+            }
+        } catch (DBException dbe) {
+            throw new ServletException();
         }
     }
 
     //удаляет все данные об отчетах и машинах
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        CarService carService = CarService.getInstance();
-        DailyReportService dailyReportService = DailyReportService.getInstance();
-
         try {
+            CarService carService = CarService.getInstance();
+            DailyReportService dailyReportService = DailyReportService.getInstance();
             carService.delete();
             dailyReportService.delete();
         } catch (DBException dbe) {
