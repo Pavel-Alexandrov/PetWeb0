@@ -1,6 +1,7 @@
 package util;
 
 import model.Car;
+import model.DailyReport;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -37,6 +38,8 @@ public class DBHelper {
         configuration.setProperty("hibernate.connection.password", "root");
         configuration.setProperty("hibernate.show_sql", "true");
         configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+        configuration.addAnnotatedClass(DailyReport.class);
+        configuration.addAnnotatedClass(Car.class);
         return configuration;
     }
 

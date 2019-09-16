@@ -33,7 +33,7 @@ public class CarDao {
         Query query = session.createQuery("FROM Car WHERE (brand =: br AND model =: md AND licensePlate =: lp)");
         query.setParameter("br", brand);
         query.setParameter("md", model);
-        query.setParameter("pl", licensePlate);
+        query.setParameter("lp", licensePlate);
         return query.getResultList();
     }
 
@@ -44,7 +44,11 @@ public class CarDao {
     }
 
     public void addCar(Car car) {
-        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT " + car.getBrand() + ", " + car.getModel() + ", " + car.getLicensePlate() + ", "+ car.getPrice() + " from Car car");
+        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT brand, model, licensePlate, price FROM Car WHERE (brand= :br AND model= :md AND licensePlate= :lp AND price= :p)");
+        query.setParameter("br", car.getBrand());
+        query.setParameter("md", car.getModel());
+        query.setParameter("lp", car.getLicensePlate());
+        query.setParameter("p", car.getPrice());
         query.executeUpdate();
     }
 
