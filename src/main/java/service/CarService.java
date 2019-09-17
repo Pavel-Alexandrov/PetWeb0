@@ -99,7 +99,11 @@ public class CarService {
             Session session = sessionFactory.openSession();
             Transaction transaction = session.beginTransaction();
             CarDao carDao = new CarDao(session);
-            if (carDao.getCarsSameBrand(brand).size() == 10) {
+            //проверяю, сколько машин внесено в бд, почему то ноль всегда (для дебага)
+            int cars = getAllCars().size();
+
+            int carsCount = carDao.getCarsSameBrand(brand).size();
+            if (carsCount >= 10) {
                 return false;
             }
             Car car = new Car(brand, model, licensePlate, price);

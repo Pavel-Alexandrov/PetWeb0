@@ -1,7 +1,6 @@
 package DAO;
 
 import model.Car;
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 
 import javax.persistence.Query;
@@ -38,17 +37,13 @@ public class CarDao {
     }
 
     public List<Car> getCarsSameBrand(String brand) {
-        Query query = session.createQuery("FROM Car WHERE brand =: br");
+        Query query = session.createQuery("FROM Car WHERE brand = :br");
         query.setParameter("br", brand);
         return query.getResultList();
     }
 
     public void addCar(Car car) {
-        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT brand, model, licensePlate, price FROM Car WHERE (brand= :br AND model= :md AND licensePlate= :lp AND price= :p)");
-        query.setParameter("br", car.getBrand());
-        query.setParameter("md", car.getModel());
-        query.setParameter("lp", car.getLicensePlate());
-        query.setParameter("p", car.getPrice());
+        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT brand, model, licensePlate, price FROM Car car");
         query.executeUpdate();
     }
 

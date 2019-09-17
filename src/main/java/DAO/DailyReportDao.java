@@ -26,7 +26,7 @@ public class DailyReportDao {
     }
 
     public void addReport(DailyReport dailyReport) {
-        Query query = session.createQuery("INSERT INTO DailyReport (earnings, soldCars) SELECT dailyReport.getEarnings(), dailyReport.getSoldCars()");
+        Query query = session.createQuery("INSERT INTO DailyReport (earnings, soldCars) SELECT earnings, soldCars FROM DailyReport dailyReport");
         query.executeUpdate();
     }
 

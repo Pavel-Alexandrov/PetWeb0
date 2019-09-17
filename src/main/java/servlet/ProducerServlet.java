@@ -22,7 +22,6 @@ public class ProducerServlet extends HttpServlet {
             String model = req.getParameter("model");
             String licensePlate = req.getParameter("licensePlate");
             Long price = Long.valueOf(req.getParameter("price"));
-
             if (carService.addCar(brand, model, licensePlate, price)) {
                 resp.setStatus(200);
             } else {
