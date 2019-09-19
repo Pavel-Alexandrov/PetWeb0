@@ -46,7 +46,7 @@ public class DBHelper {
     private static SessionFactory createSessionFactory() {
         Configuration configuration = getMySqlConfiguration();
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
-        builder.applySettings(configuration.getProperties());
+        builder.applySettings(configuration.getProperties()); //
         ServiceRegistry serviceRegistry = builder.build();
         return configuration.buildSessionFactory(serviceRegistry);
     }

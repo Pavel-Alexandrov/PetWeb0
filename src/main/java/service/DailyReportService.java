@@ -6,8 +6,6 @@ import model.DailyReport;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 import util.DBHelper;
 
 import java.util.List;
@@ -49,13 +47,7 @@ public class DailyReportService {
         try {
             Session session = sessionFactory.openSession();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
-            List<DailyReport> dailyReportList = dailyReportDao.getLastReport();
-            DailyReport dailyReport;
-            if (dailyReportList.size() == 1) {
-                dailyReport = dailyReportList.get(0);
-            } else {
-                throw new DBException(new Exception());
-            }
+            DailyReport dailyReport = dailyReportDao.getLastReport();
             session.close();
             return dailyReport;
         } catch (HibernateException he) {
@@ -71,13 +63,11 @@ public class DailyReportService {
     public void drawUpReport() throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            Transaction transaction = session.beginTransaction();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
             DailyReport dailyReport = new DailyReport(earnings, soldCars);
             dailyReportDao.addReport(dailyReport);
             this.earnings = 0;
             this.soldCars = 0;
-            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);
@@ -87,10 +77,8 @@ public class DailyReportService {
     public void delete() throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            Transaction transaction = session.beginTransaction();
             DailyReportDao dailyReportDao = new DailyReportDao(session);
             dailyReportDao.clean();
-            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);

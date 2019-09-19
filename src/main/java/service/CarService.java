@@ -6,7 +6,6 @@ import model.Car;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import util.DBHelper;
 
 import java.util.List;
@@ -45,15 +44,7 @@ public class CarService {
         try {
             Session session = sessionFactory.openSession();
             CarDao carDao = new CarDao(session);
-            List<Car> carList = carDao.getCar(brand, model, licensePlate);
-            Car car;
-            switch (carList.size()) {
-                case (0): car = null;
-                break;
-                case (1): car = carList.get(0);
-                break;
-                default: throw new DBException(new Exception());
-            }
+            Car car = carDao.getCar(brand, model, licensePlate);
             session.close();
             return car;
         } catch (HibernateException he) {
@@ -64,29 +55,20 @@ public class CarService {
     public void removeCar(String brand, String model, String licensePlate) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            Transaction transaction = session.beginTransaction();
             CarDao carDao = new CarDao(session);
             carDao.removeCar(brand, model, licensePlate);
-            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);
         }
     }
 
+    //зачем мне этот метод?
     public Car getCar(String brand, String model, String licensePlate) throws DBException {
         try {
             Session session = sessionFactory.openSession();
             CarDao carDao = new CarDao(session);
-            List <Car> carList = carDao.getCar(brand, model, licensePlate);
-            Car car;
-            switch (carList.size()) {
-                case (0): car = null;
-                    break;
-                case (1): car = carList.get(0);
-                    break;
-                default: throw new DBException(new Exception());
-            }
+            Car car = carDao.getCar(brand, model, licensePlate);
             session.close();
             return car;
         } catch (HibernateException he) {
@@ -97,7 +79,7 @@ public class CarService {
     public boolean addCar(String brand, String model, String licensePlate, Long price) throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            Transaction transaction = session.beginTransaction();
+
             CarDao carDao = new CarDao(session);
             //проверяю, сколько машин внесено в бд, почему то ноль всегда (для дебага)
             int cars = getAllCars().size();
@@ -108,7 +90,6 @@ public class CarService {
             }
             Car car = new Car(brand, model, licensePlate, price);
             carDao.addCar(car);
-            transaction.commit();
             session.close();
             return true;
         } catch (HibernateException he) {
@@ -119,10 +100,8 @@ public class CarService {
     public void delete() throws DBException {
         try {
             Session session = sessionFactory.openSession();
-            Transaction transaction = session.beginTransaction();
             CarDao carDao = new CarDao(session);
             carDao.clean();
-            transaction.commit();
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);

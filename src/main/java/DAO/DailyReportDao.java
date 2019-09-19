@@ -1,9 +1,10 @@
 package DAO;
 
 import model.DailyReport;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
-
-import javax.persistence.Query;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import java.util.List;
 
 public class DailyReportDao {
@@ -15,23 +16,27 @@ public class DailyReportDao {
     }
 
     public List<DailyReport> getAllDailyReport() {
-        Query query = session.createQuery("FROM DailyReport d");
-        return query.getResultList();
+        Criteria criteria = session.createCriteria(DailyReport.class);
+        return criteria.list();
     }
 
-    public List<DailyReport> getLastReport() {
-        Query query = session.createQuery("FROM DailyReport ORDER BY id DESC");
-        query.setMaxResults(1);
-        return query.getResultList();
+    public DailyReport getLastReport() {
+        Criteria criteria = session.createCriteria(DailyReport.class);
+        criteria.addOrder(Order.desc("id"));
+        criteria.setMaxResults(1);
+        return (DailyReport) criteria.uniqueResult();
     }
 
     public void addReport(DailyReport dailyReport) {
-        Query query = session.createQuery("INSERT INTO DailyReport (earnings, soldCars) SELECT earnings, soldCars FROM DailyReport dailyReport");
-        query.executeUpdate();
+        Transaction transaction = session.beginTransaction();
+        session.save(dailyReport);
+        transaction.commit();
     }
 
     public void clean() {
-        Query query = session.createQuery("DELETE FROM DailyReport d");
-        query.executeUpdate();
+        Transaction transaction = session.beginTransaction();
+        Criteria criteria = session.createCriteria(DailyReport.class);
+        session.delete(criteria);
+        transaction.commit();
     }
 }

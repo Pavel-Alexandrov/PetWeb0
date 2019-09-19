@@ -1,9 +1,11 @@
 package DAO;
 
 import model.Car;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
-import javax.persistence.Query;
 import java.util.List;
 
 public class CarDao {
@@ -15,40 +17,46 @@ public class CarDao {
     }
 
     public List<Car> getAllCars() {
-        Query query = session.createQuery("FROM Car c");
-        List<Car> carList = query.getResultList();
-        return carList;
+        Criteria criteria = session.createCriteria(Car.class);
+        return criteria.list();
     }
 
     public void removeCar(String brand, String model, String licensePlate) {
-        Query query = session.createQuery("DELETE Car WHERE (brand =: br AND model =: md AND licensePlate =: lp)");
-        query.setParameter("br", brand);
-        query.setParameter("md", model);
-        query.setParameter("pl", licensePlate);
-        query.executeUpdate();
+        Transaction transaction = session.beginTransaction();
+        Criteria criteria = session.createCriteria(Car.class);
+        Car car = (Car) criteria.add(Restrictions.eq("brand", brand))
+                .add(Restrictions.eq("model", model))
+                .add(Restrictions.eq("licensePlate", licensePlate))
+                .uniqueResult();
+        session.delete(car);
+        transaction.commit();
     }
 
-    public List<Car> getCar(String brand, String model, String licensePlate) {
-        Query query = session.createQuery("FROM Car WHERE (brand =: br AND model =: md AND licensePlate =: lp)");
-        query.setParameter("br", brand);
-        query.setParameter("md", model);
-        query.setParameter("lp", licensePlate);
-        return query.getResultList();
+    public Car getCar(String brand, String model, String licensePlate) {
+        Criteria criteria = session.createCriteria(Car.class);
+        criteria.add(Restrictions.eq("brand", brand))
+                .add(Restrictions.eq("model", model))
+                .add(Restrictions.eq("licensePlate", licensePlate))
+                .uniqueResult();
+        return (Car)criteria.uniqueResult();
     }
 
     public List<Car> getCarsSameBrand(String brand) {
-        Query query = session.createQuery("FROM Car WHERE brand = :br");
-        query.setParameter("br", brand);
-        return query.getResultList();
+        Criteria criteria = session.createCriteria(Car.class);
+        criteria.add(Restrictions.eq("brand", brand));
+        return criteria.list();
     }
 
     public void addCar(Car car) {
-        Query query = session.createQuery("INSERT INTO Car (brand, model, licensePlate, price) SELECT brand, model, licensePlate, price FROM Car car");
-        query.executeUpdate();
+        Transaction transaction = session.beginTransaction();
+        session.save(car);
+        transaction.commit();
     }
 
     public void clean() {
-        Query query = session.createQuery("DELETE FROM Car c");
-        query.executeUpdate();
+        Transaction transaction = session.beginTransaction();
+        Criteria criteria = session.createCriteria(Car.class);
+        session.delete(criteria);
+        transaction.commit();
     }
 }
