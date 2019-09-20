@@ -6,7 +6,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
+import javax.persistence.Query;
 import java.util.List;
+import java.util.Queue;
 
 public class CarDao {
 
@@ -55,8 +57,8 @@ public class CarDao {
 
     public void clean() {
         Transaction transaction = session.beginTransaction();
-        Criteria criteria = session.createCriteria(Car.class);
-        session.delete(criteria);
+        Query query = session.createQuery("delete from Car");
+        query.executeUpdate();
         transaction.commit();
     }
 }

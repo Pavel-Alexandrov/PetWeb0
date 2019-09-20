@@ -19,7 +19,7 @@ public class Main {
         context.addServlet(new ServletHolder(customerServlet), "/customer");
         context.addServlet(new ServletHolder(producerServlet), "/producer");
         context.addServlet(new ServletHolder(newDayServlet), "/newday");
-        context.addServlet(new ServletHolder(dailyReportServlet), "/report");
+        context.addServlet(new ServletHolder(dailyReportServlet), "/report/*");
 
         Server server = new Server(8080);
         server.setHandler(context);

@@ -5,6 +5,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+
+import javax.persistence.Query;
 import java.util.List;
 
 public class DailyReportDao {
@@ -35,8 +38,8 @@ public class DailyReportDao {
 
     public void clean() {
         Transaction transaction = session.beginTransaction();
-        Criteria criteria = session.createCriteria(DailyReport.class);
-        session.delete(criteria);
+        Query query = session.createQuery("delete from DailyReport");
+        query.executeUpdate();
         transaction.commit();
     }
 }

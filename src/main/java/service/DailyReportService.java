@@ -16,9 +16,9 @@ public class DailyReportService {
 
     private SessionFactory sessionFactory;
 
-    private long soldCars = 0;
+    private Long soldCars = 0L;
 
-    private long earnings = 0;
+    private Long earnings = 0L;
 
     private DailyReportService(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -56,7 +56,7 @@ public class DailyReportService {
     }
 
     public void addSoldCar(Long carPrice) {
-            this.soldCars++;
+            this.soldCars += 1;
             this.earnings += carPrice;
     }
 
@@ -66,8 +66,8 @@ public class DailyReportService {
             DailyReportDao dailyReportDao = new DailyReportDao(session);
             DailyReport dailyReport = new DailyReport(earnings, soldCars);
             dailyReportDao.addReport(dailyReport);
-            this.earnings = 0;
-            this.soldCars = 0;
+            this.earnings = 0L;
+            this.soldCars = 0L;
             session.close();
         } catch (HibernateException he) {
             throw new DBException(he);
