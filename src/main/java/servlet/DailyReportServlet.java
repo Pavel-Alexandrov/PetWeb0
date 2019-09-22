@@ -1,5 +1,6 @@
 package servlet;
 
+import com.google.gson.Gson;
 import exceptions.DBException;
 import model.DailyReport;
 import service.CarService;
@@ -17,18 +18,22 @@ public class DailyReportServlet extends HttpServlet {
     // */report/all* возвращает все сформированные отчеты
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        DailyReportService dailyReportService = DailyReportService.getInstance();
+        Gson gson = new Gson();
+        String json = null;
         try {
-            DailyReportService dailyReportService = DailyReportService.getInstance();
-
             if (req.getPathInfo().contains("all")) {
-                dailyReportService.getAllDailyReports();
+                json = gson.toJson(dailyReportService.getAllDailyReports());
             } else if (req.getPathInfo().contains("last")) {
-                dailyReportService.getLastReport();
+                json = gson.toJson(dailyReportService.getLastReport());
             }
 
         } catch (DBException dbe) {
             throw new ServletException();
         }
+
+        resp.getWriter().write(json);
+        resp.setStatus(200);
     }
 
     //удаляет все данные об отчетах и машинах
